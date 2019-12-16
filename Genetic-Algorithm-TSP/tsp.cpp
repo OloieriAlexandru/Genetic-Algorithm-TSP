@@ -20,7 +20,7 @@ void tsp::run (int runs){
 		std::cin >> command;
 		if (command == "ga" || command == "genetic") {
 			geneticAlgorithm ga(currentMap);
-			ga.runGeneticAlgorithm (fileOut);
+			ga.runGeneticAlgorithm (fileOut, runs);
 		}
 		else if (command == "sa" || command == "simulated") {
 			simulatedAnnealing sa (currentMap);

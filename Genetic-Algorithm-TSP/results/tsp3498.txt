@@ -1,0 +1,6 @@
+Results for genetic algorithm run no. 1:
+Results for genetic algorithm run no. 2:
+Results for genetic algorithm run no. 3:
+Results for simulated annealing run no. 1:
+Results for simulated annealing run no. 2:
+Results for genetic algorithm run no. 4:

@@ -13,5 +13,5 @@ public:
 		++runCount;
 	}
 
-	void runGeneticAlgorithm (std::ofstream& fileOut);
+	void runGeneticAlgorithm (std::ofstream& fileOut, int runs);
 };
