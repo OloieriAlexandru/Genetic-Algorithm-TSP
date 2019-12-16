@@ -1,6 +1,10 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <ctime>
+#include <cstdlib>
+
+#include "tsp.h"
 
 const char* mapsPath = "maps.txt";
 const char* errorMessage = "Errorr!\n";
@@ -10,6 +14,7 @@ void addMap (const std::string& name, const std::string& path);
 std::string getPath (const std::string& name);
 
 int main() {
+	srand (time (NULL));
 	while (true) {
 		std::string command;
 		std::cout << "menu: ";
@@ -19,7 +24,8 @@ int main() {
 			std::cin >> name;
 			std::string mapPath = getPath (name);
 			if (mapPath.size ()) {
-				
+				tsp thisTsp(mapPath);
+				thisTsp.run ();
 			}
 			else {
 				std::cout << "Invalid name!\n";

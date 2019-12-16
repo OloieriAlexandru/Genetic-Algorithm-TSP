@@ -115,10 +115,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="geneticAlgorithm.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="simulatedAnnealing.cpp" />
+    <ClCompile Include="tsp.cpp" />
+    <ClCompile Include="tspMap.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="map.h" />
+    <ClInclude Include="geneticAlgorithm.h" />
+    <ClInclude Include="simulatedAnnealing.h" />
+    <ClInclude Include="tspMap.h" />
+    <ClInclude Include="tsp.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

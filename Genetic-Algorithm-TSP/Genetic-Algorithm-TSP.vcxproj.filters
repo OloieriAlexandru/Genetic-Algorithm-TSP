@@ -18,9 +18,30 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="tspMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tsp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="simulatedAnnealing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="geneticAlgorithm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="map.h">
+    <ClInclude Include="tsp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tspMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="geneticAlgorithm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="simulatedAnnealing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
