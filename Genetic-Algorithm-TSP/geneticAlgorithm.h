@@ -20,6 +20,8 @@ private:
 	int number_of_gens;
 	int limit;
 	double cross_prob, mutation_chance;
+	std::vector<int>optimal_tour;
+	int optimal_gen;
 public:
 
 	geneticAlgorithm (const tspMap& map) : currentMap (map) {
@@ -29,17 +31,18 @@ public:
 		limit = 75;
 		cross_prob = 0.3;
 		mutation_chance = 0.01;
+		optimal_gen = 1;
 	}
 	void set_param();
 	void runGeneticAlgorithm (std::ofstream& fileOut, int runs);
-	double Euclidian_2D(std::vector<int> x);
-	void hypermutation(int counter);
+	double Euclidian_2D(const std::vector<int> &x);
+	void hypermutation(const int &counter);
 	void crossover();
 	void evalGen(std::vector<double>& fit);
-	unsigned int select1(std::vector<double> fs);
+	unsigned int select1(const std::vector<double> &fs);
 	void selection();
 	void chromosome_generator(std::vector<int>& val);
-	std::vector<int> decodeElem(std::vector<int> x);
+	std::vector<int> decodeElem(const std::vector<int> &x);
 	void set_mold();
 	void init_pop();
 	void Genetic_Algorith();

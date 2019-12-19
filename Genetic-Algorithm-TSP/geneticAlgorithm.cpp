@@ -5,7 +5,6 @@ std::mt19937 gen(std::random_device{}());
 
 void geneticAlgorithm::runGeneticAlgorithm (std::ofstream & fileOut, int runs)
 {
-	std::vector<int> decoded;
 	std::string answer;
 	unsigned int dec_size = currentMap.points.size();
 	
@@ -41,17 +40,17 @@ void geneticAlgorithm::runGeneticAlgorithm (std::ofstream & fileOut, int runs)
 		Genetic_Algorith();
 		end = std::chrono::system_clock::now();
 		std::chrono::duration<double> elapsed_seconds = end - start;
-		decoded = decodeElem(pop[det_optimal_chromosome()]);
 		std::cout << "Iteration " << i << ": found optimal tour ";
 		for (unsigned int j = 0; j < standard_pop_size - 1; ++j)
 		{
-			std::cout << decoded[j] << " | ";
-			fileOut << decoded[j] << ' ';
+			std::cout << optimal_tour[j] << " | ";
+			fileOut << optimal_tour[j] << ' ';
 		}
-		weight = Euclidian_2D(decoded);
+		weight = Euclidian_2D(optimal_tour);
 		time = elapsed_seconds.count();
-		std::cout << decoded[standard_pop_size - 1] << " with the weight " << weight << " in " << time << " seconds." << std::endl << std::endl;
-		fileOut << decoded[standard_pop_size - 1] << ';' << weight << ';' << time << std::endl;
+		std::cout << optimal_tour[standard_pop_size - 1] << " with the weight " << weight << " in generation "
+			<< optimal_gen << " in " << time << " seconds." << std::endl << std::endl;
+		fileOut << optimal_tour[standard_pop_size - 1] << ';' << weight << ';' << time << std::endl;
 	}
 	std::cout << "------------------------------------------------------------------\n";
 }
@@ -68,7 +67,7 @@ void geneticAlgorithm::chromosome_generator(std::vector<int>& val)
 	val.emplace_back(0);
 }
 
-std::vector<int> geneticAlgorithm::decodeElem(std::vector<int> x)
+std::vector<int> geneticAlgorithm::decodeElem(const std::vector<int> &x)
 {
 	std::vector<int> result;
 	auto it = mold.begin();
@@ -90,7 +89,7 @@ void geneticAlgorithm::set_mold()
 		mold.emplace_back(i);
 }
 
-double geneticAlgorithm::Euclidian_2D(std::vector<int> x)
+double geneticAlgorithm::Euclidian_2D(const std::vector<int> &x)
 {
 	double tour_weight = 0;
 	unsigned int chromo_size = x.size();
@@ -109,7 +108,7 @@ void geneticAlgorithm::init_pop()
 		chromosome_generator(pop[i]);
 }
 
-void geneticAlgorithm::hypermutation(int counter)
+void geneticAlgorithm::hypermutation(const int &counter)
 {
 	std::uniform_real_distribution<> dist(0, 1);
 	double mutation_prob;
@@ -220,13 +219,23 @@ void geneticAlgorithm::evalGen(std::vector<double>& fit)
 {
 	unsigned int i;
 	unsigned int pop_size = pop.size();
-	for (i = 0; i < pop_size; ++i)
+	double aux;
+	double maxi_f = Euclidian_2D(decodeElem(pop[0]));
+	/*for (i = 0; i < pop_size; ++i)
 	{
-		fit.push_back(1.1/Euclidian_2D(decodeElem(pop[i])));
+		fit.push_back(1.1/Euclidian_2D(decodeElem(pop[i]))); //dupa cum ai sa vezi in cele doua fisiere .txt, varianta asta nu produce rezultate atat de bune
+	}*/
+	for (i = 1; i < pop.size(); ++i)
+	{
+		aux = Euclidian_2D(decodeElem(pop[i]));
+		if (aux > maxi_f)
+			maxi_f = aux;
 	}
+	for (i = 0; i < pop.size(); ++i)
+		fit.push_back(1.1 * maxi_f - Euclidian_2D(decodeElem(pop[i])));
 }
 
-unsigned int geneticAlgorithm::select1(std::vector<double> fs)
+unsigned int geneticAlgorithm::select1(const std::vector<double> &fs)
 {
 	std::uniform_real_distribution<> dist(0, 1);
 	double probability = dist(gen) * fs.back();
@@ -256,8 +265,9 @@ void geneticAlgorithm::Genetic_Algorith()
 	set_mold();
 	int i = 1;
 	int nrGen = 500;
-	double best_sol = calc_f_value();
-	int best_Gen = 1;
+	optimal_tour = decodeElem(pop[det_optimal_chromosome()]);
+	unsigned opt_poz;
+	double best_sol = Euclidian_2D(optimal_tour);
 	int counter = 1;
 	double possible_sol;
 	while (i <= nrGen)
@@ -265,14 +275,19 @@ void geneticAlgorithm::Genetic_Algorith()
 		hypermutation(counter);
 		crossover();
 		selection();
+		opt_poz = det_optimal_chromosome();
 		if (counter == limit)
-			best_sol = calc_f_value();
-		possible_sol = calc_f_value();
+			best_sol = Euclidian_2D(decodeElem(pop[opt_poz]));
+		possible_sol = Euclidian_2D(decodeElem(pop[opt_poz]));
 		i++;
 		if (possible_sol < best_sol)
 		{
 			best_sol = possible_sol;
-			best_Gen = i;
+			if(Euclidian_2D(optimal_tour) > best_sol)
+			{
+				optimal_tour = decodeElem(pop[opt_poz]);
+			}
+			optimal_gen = i;
 			counter = 1;
 		}
 		else
@@ -280,18 +295,18 @@ void geneticAlgorithm::Genetic_Algorith()
 	}
 }
 
-double geneticAlgorithm::calc_f_value()
+void geneticAlgorithm::set_param()
 {
-	unsigned int pop_size = pop.size();
-	double sol = Euclidian_2D(decodeElem(pop[0]));
-	double aux;
-	for (unsigned int j = 1; j < pop_size; j++)
-	{
-		aux = Euclidian_2D(decodeElem(pop[j]));
-		if (sol > aux)
-			sol = aux;
-	}		
-	return sol;
+	std::cout << "Give new population size: ";
+	std::cin >> standard_pop_size;
+	std::cout << "Give new number of generations: ";
+	std::cin >> number_of_gens;
+	std::cout << "Give new hypermutation mark: ";
+	std::cin >> limit;
+	std::cout << "Give new mutation chance: ";
+	std::cin >> mutation_chance;
+	std::cout << "Give new crossover chance: ";
+	std::cin >> cross_prob;
 }
 
 unsigned int geneticAlgorithm::det_optimal_chromosome()
@@ -311,16 +326,16 @@ unsigned int geneticAlgorithm::det_optimal_chromosome()
 	return poz;
 }
 
-void geneticAlgorithm::set_param()
+double geneticAlgorithm::calc_f_value()
 {
-	std::cout << "Give new population size: ";
-	std::cin >> standard_pop_size;
-	std::cout << "Give new number of generations: ";
-	std::cin >> number_of_gens;
-	std::cout << "Give new hypermutation mark: ";
-	std::cin >> limit;
-	std::cout << "Give new mutation chance: ";
-	std::cin >> mutation_chance;
-	std::cout << "Give new crossover chance: ";
-	std::cin >> cross_prob;
+	unsigned int pop_size = pop.size();
+	double sol = Euclidian_2D(decodeElem(pop[0]));
+	double aux;
+	for (unsigned int j = 1; j < pop_size; j++)
+	{
+		aux = Euclidian_2D(decodeElem(pop[j]));
+		if (sol > aux)
+			sol = aux;
+	}		
+	return sol;
 }
