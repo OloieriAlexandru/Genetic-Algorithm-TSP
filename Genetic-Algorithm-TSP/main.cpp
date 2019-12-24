@@ -9,12 +9,14 @@
 const char* mapsPath = "maps.txt";
 const char* errorMessage = "Errorr!\n";
 
+void listOptions ();
 void listMaps ();
 void addMap (const std::string& name, const std::string& path);
 std::string getPath (const std::string& name);
 
 int main() {
 	srand (time (NULL));
+	listOptions ();
 	while (true) {
 		std::string command;
 		std::cout << "menu: ";
@@ -26,6 +28,7 @@ int main() {
 			if (mapPath.size ()) {
 				tsp thisTsp(mapPath);
 				thisTsp.run ();
+				listOptions ();
 			}
 			else {
 				std::cout << "Invalid name!\n";
@@ -36,14 +39,25 @@ int main() {
 		} 
 		else if (command == "add") {
 			std::string name, path;
+			std::cout << "mapName mapPath\n";
 			std::cin >> name >> path;
 			addMap (name, path);
 		}
 		else if (command == "quit" || command == "q") {
 			break;
 		}
+		else {
+			listOptions ();
+		}
 	}
 	return 0;
+}
+
+void listOptions () {
+	std::cout << "1. run mapName\n";
+	std::cout << "2. list (all the maps)\n";
+	std::cout << "3. add (a new map)\n";
+	std::cout << "4. quit\n";
 }
 
 void listMaps () {

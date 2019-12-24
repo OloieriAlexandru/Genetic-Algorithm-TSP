@@ -1,7 +1,6 @@
 #pragma once
 
 #include <fstream>
-#include "tspMap.h"
 #include <random>
 #include <vector>
 #include <iterator>
@@ -10,20 +9,23 @@
 #include <utility>
 #include <string>
 
+#include "helper.h"
+#include "tspMap.h"
+
 class geneticAlgorithm {
 private:
-	static int runCount;
-	const tspMap & currentMap;
-	std::vector<int>mold;
-	std::vector<std::vector<int>> pop;
-	unsigned int standard_pop_size;
-	int number_of_gens;
-	int limit;
-	double cross_prob, mutation_chance;
-	std::vector<int>optimal_tour;
-	int optimal_gen;
-public:
+	static int							runCount;
+	const tspMap &						currentMap;
 
+	unsigned int						standard_pop_size;
+	int									number_of_gens;
+	int									limit;
+	int									optimal_gen;
+	std::vector<int>					optimal_tour;
+	std::vector<int>					mold;
+	std::vector<std::vector<int>>		pop;
+	double								cross_prob, mutation_chance;
+public:
 	geneticAlgorithm (const tspMap& map) : currentMap (map) {
 		++runCount;
 		standard_pop_size = 100;
@@ -33,20 +35,22 @@ public:
 		mutation_chance = 0.01;
 		optimal_gen = 1;
 	}
-	void set_param();
-	void runGeneticAlgorithm (std::ofstream& fileOut, int runs);
-	double Euclidian_2D(const std::vector<int> &x);
-	void hypermutation(const int &counter);
-	void crossover();
-	void evalGen(std::vector<double>& fit);
-	unsigned int select1(const std::vector<double> &fs);
-	void selection();
-	void chromosome_generator(std::vector<int>& val);
-	std::vector<int> decodeElem(const std::vector<int> &x);
-	void set_mold();
-	void init_pop();
-	void Genetic_Algorith();
-	double calc_f_value();
-	unsigned int det_optimal_chromosome();
+
+	void						set_param();
+	void						runGeneticAlgorithm (std::ofstream& fileOut, int runs);
+	void						hypermutation(const int &counter);
+	void						crossover();
+	void						evalGen(std::vector<double>& fit);
+	void						selection();
+	void						chromosome_generator(std::vector<int>& val);
+	void						set_mold ();
+	void						init_pop ();
+	void						Genetic_Algorith ();
+	
+	std::vector<int>			decodeElem(const std::vector<int> &x);
+	double						calc_f_value();
+
+	unsigned int				select1 (const std::vector<double> &fs);
+	unsigned int				det_optimal_chromosome();
 };
 

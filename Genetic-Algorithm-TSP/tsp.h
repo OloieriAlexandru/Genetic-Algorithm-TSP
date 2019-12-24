@@ -10,10 +10,12 @@
 
 class tsp {
 private:
-	tspMap currentMap;
-	std::string getNewFileName ();
-public:
-	tsp (const std::string& mapPath);
+	tspMap			currentMap;
 
-	void run (int runs = 30);
+	void			listOptions ();
+	std::string		getNewFileName ();
+public:
+					tsp (const std::string& mapPath);
+
+	void			run (int runs = 30);
 };

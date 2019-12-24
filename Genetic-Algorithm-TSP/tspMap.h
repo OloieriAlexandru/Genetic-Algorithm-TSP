@@ -14,6 +14,6 @@ struct point {
 
 class tspMap {
 public:
-	std::vector<point>points;
-	void loadMap (std::string path);
+	std::vector<point>			points;
+	void						loadMap (std::string path);
 };

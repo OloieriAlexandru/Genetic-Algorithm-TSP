@@ -1,1 +1,2 @@
 bier127 maps/bier127.txt
+st70 maps/st70.txt
