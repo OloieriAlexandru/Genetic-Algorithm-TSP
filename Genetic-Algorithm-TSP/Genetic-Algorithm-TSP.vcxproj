@@ -117,6 +117,7 @@
   <ItemGroup>
     <ClCompile Include="geneticAlgorithm.cpp" />
     <ClCompile Include="helper.cpp" />
+    <ClCompile Include="hillClimbingCandidate.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="simulatedAnnealing.cpp" />
     <ClCompile Include="tsp.cpp" />
@@ -125,6 +126,7 @@
   <ItemGroup>
     <ClInclude Include="geneticAlgorithm.h" />
     <ClInclude Include="helper.h" />
+    <ClInclude Include="hillClimbingCandidate.h" />
     <ClInclude Include="simulatedAnnealing.h" />
     <ClInclude Include="tspMap.h" />
     <ClInclude Include="tsp.h" />

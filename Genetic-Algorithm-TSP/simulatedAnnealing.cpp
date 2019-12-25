@@ -71,7 +71,7 @@ void simulatedAnnealing::runSimulatedAnnealing (std::ofstream & fileOut, int run
 		std::cin >> iterations;
 	}
 
-	std::cout << "\nResults for genetic algorithm run no. " + std::to_string (runCount) + ":\n";
+	std::cout << "\nResults for simulated annealing run no. " + std::to_string (runCount) + ":\n";
 	std::chrono::time_point<std::chrono::system_clock> start, end;
 	std::cout << '\n';
 	double weight, time;
@@ -85,6 +85,10 @@ void simulatedAnnealing::runSimulatedAnnealing (std::ofstream & fileOut, int run
 		time = elapsed_seconds.count ();
 		std::cout << "Iteration " << i << ": found optimal tour with the weight ";
 		std::cout << weight << " in " << time << " seconds\n\n";
+		for (int i = 0; i < bestCandidate.size (); ++i) {
+			fileOut << bestCandidate[i] << ' ';
+		}
+		fileOut << ';' << weight << ';' << time << '\n';
 	}
 }
 
