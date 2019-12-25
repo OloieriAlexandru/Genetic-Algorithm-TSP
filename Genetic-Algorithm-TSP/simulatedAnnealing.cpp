@@ -57,7 +57,8 @@ void simulatedAnnealing::runSimulatedAnnealing (std::ofstream & fileOut, int run
 {
 	int iterations = 100;
 	bool running = true;
-	
+
+	std::cout << "------------------------------------------------------------------\n\n";
 	std::cout << "Iterations = 100, do you want to change that? (y/n): ";
 	std::string response;
 	std::cin >> response;
@@ -76,6 +77,7 @@ void simulatedAnnealing::runSimulatedAnnealing (std::ofstream & fileOut, int run
 	std::cout << '\n';
 	double weight, time;
 
+	fileOut << "sa\n";
 	for (int i = 0; i < runs; ++i) {
 		std::vector<int> bestCandidate;
 		start = std::chrono::system_clock::now ();
@@ -83,13 +85,16 @@ void simulatedAnnealing::runSimulatedAnnealing (std::ofstream & fileOut, int run
 		end = std::chrono::system_clock::now ();
 		std::chrono::duration<double> elapsed_seconds = end - start;
 		time = elapsed_seconds.count ();
-		std::cout << "Iteration " << i << ": found optimal tour with the weight ";
-		std::cout << weight << " in " << time << " seconds\n\n";
-		for (int i = 0; i < bestCandidate.size (); ++i) {
-			fileOut << bestCandidate[i] << ' ';
+		int dim = bestCandidate.size();
+		std::cout << "Iteration " << i + 1 << ": found optimal tour ";
+		for (int i = 0; i < dim - 1; ++i) {
+			std::cout << bestCandidate[i] << " | ";
 		}
-		fileOut << ';' << weight << ';' << time << '\n';
+		std::cout << bestCandidate[dim - 1] << " with the weight " << weight << " in " << time << " seconds\n\n";
+		fileOut << weight << ';' << time << '\n';
 	}
+
+	std::cout << "------------------------------------------------------------------\n";
 }
 
 double simulatedAnnealing::simulatedAnnealingRun (int iterations, std::vector<int>& bestCandidate)

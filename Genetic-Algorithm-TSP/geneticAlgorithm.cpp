@@ -35,6 +35,7 @@ void geneticAlgorithm::runGeneticAlgorithm (std::ofstream & fileOut, int runs)
 	double weight, time;
 	int dim;
 
+	fileOut << "ga\n";
 	for (int i = 1; i <= runs; ++i)
 	{
 		start = std::chrono::system_clock::now();
@@ -42,17 +43,16 @@ void geneticAlgorithm::runGeneticAlgorithm (std::ofstream & fileOut, int runs)
 		end = std::chrono::system_clock::now();
 		std::chrono::duration<double> elapsed_seconds = end - start;
 		std::cout << "Iteration " << i << ": found optimal tour ";
-		dim = optimal_tour.size ();
+		dim = optimal_tour.size();
 		for (unsigned int j = 0; j < dim - 1; ++j)
 		{
 			std::cout << optimal_tour[j] << " | ";
-			fileOut << optimal_tour[j] << ' ';
 		}
-		weight = helper::Euclidian_2D (currentMap, optimal_tour);
+		weight = helper::Euclidian_2D(currentMap, optimal_tour);
 		time = elapsed_seconds.count();
 		std::cout << optimal_tour[dim - 1] << " with the weight " << weight << " in generation "
 			<< optimal_gen << " in " << time << " seconds." << std::endl << std::endl;
-		fileOut << optimal_tour[dim - 1] << ';' << weight << ';' << time << std::endl;
+		fileOut << weight << ';' << time << std::endl;
 	}
 	std::cout << "------------------------------------------------------------------\n";
 }
