@@ -40,18 +40,19 @@ void geneticAlgorithm::runGeneticAlgorithm (std::ofstream & fileOut, int runs)
 	{
 		start = std::chrono::system_clock::now();
 		Genetic_Algorith();
+		hillClimbingCandidate result(currentMap, optimal_tour);
+		weight = result.hillClimbing(optimal_tour);
 		end = std::chrono::system_clock::now();
 		std::chrono::duration<double> elapsed_seconds = end - start;
+		time = elapsed_seconds.count();
 		std::cout << "Iteration " << i << ": found optimal tour ";
 		dim = optimal_tour.size();
 		for (unsigned int j = 0; j < dim - 1; ++j)
 		{
 			std::cout << optimal_tour[j] << " | ";
 		}
-		weight = helper::Euclidian_2D(currentMap, optimal_tour);
-		time = elapsed_seconds.count();
-		std::cout << optimal_tour[dim - 1] << " with the weight " << weight << " in generation "
-			<< optimal_gen << " in " << time << " seconds." << std::endl << std::endl;
+		std::cout << optimal_tour[dim - 1] << " with the weight " << weight
+			<< " in " << time << " seconds." << std::endl << std::endl;
 		fileOut << weight << ';' << time << std::endl;
 	}
 	std::cout << "------------------------------------------------------------------\n";
@@ -106,7 +107,7 @@ void geneticAlgorithm::hypermutation(const int &counter)
 	if (counter < limit)
 		mutation_prob = mutation_chance;
 	else
-		mutation_prob = 0.5;
+		mutation_prob = 0.3;
 	unsigned int pop_size = pop.size(), chromosome_size = currentMap.points.size();
 	for (unsigned int i = 0; i < pop_size; ++i)
 		for (unsigned int j = 0; j < chromosome_size - 1; ++j)
@@ -212,18 +213,18 @@ void geneticAlgorithm::evalGen(std::vector<double>& fit)
 	unsigned int pop_size = pop.size();
 	double aux;
 	double maxi_f = helper::Euclidian_2D(currentMap, decodeElem(pop[0]));
-	/*for (i = 0; i < pop_size; ++i)
+	for (i = 0; i < pop_size; ++i)
 	{
-		fit.push_back(1.1/Euclidian_2D(decodeElem(pop[i]))); //dupa cum ai sa vezi in cele doua fisiere .txt, varianta asta nu produce rezultate atat de bune
-	}*/
-	for (i = 1; i < pop.size(); ++i)
+		fit.push_back(1/(0.00001 + helper::Euclidian_2D(currentMap, decodeElem(pop[i])))); //dupa cum ai sa vezi in cele doua fisiere .txt, varianta asta nu produce rezultate atat de bune
+	}
+	/*for (i = 1; i < pop.size(); ++i)
 	{
 		aux = helper::Euclidian_2D (currentMap, decodeElem(pop[i]));
 		if (aux > maxi_f)
 			maxi_f = aux;
 	}
 	for (i = 0; i < pop.size(); ++i)
-		fit.push_back(1.1 * maxi_f - helper::Euclidian_2D (currentMap, decodeElem(pop[i])));
+		fit.push_back(1.1 * maxi_f - helper::Euclidian_2D (currentMap, decodeElem(pop[i])));*/
 }
 
 unsigned int geneticAlgorithm::select1(const std::vector<double> &fs)
@@ -255,13 +256,12 @@ void geneticAlgorithm::Genetic_Algorith()
 	init_pop();
 	set_mold();
 	int i = 1;
-	int nrGen = 500;
 	optimal_tour = decodeElem(pop[det_optimal_chromosome()]);
 	unsigned opt_poz;
 	double best_sol = helper::Euclidian_2D (currentMap, optimal_tour);
 	int counter = 1;
 	double possible_sol;
-	while (i <= nrGen)
+	while (i <= number_of_gens)
 	{
 		hypermutation(counter);
 		crossover();

@@ -34,7 +34,7 @@ double hillClimbingCandidate::evaluateCurrentCandidate ()
 
 double hillClimbingCandidate::hillClimbing (std::vector<int>& finalCandidate)
 {
-	while (hillClimbingExploration ());
-	finalCandidate = currentCandidate;
+	while (hillClimbingExploration ())
+		finalCandidate = currentCandidate;
 	return currentIterationBest;
 }

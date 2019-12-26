@@ -11,6 +11,7 @@
 
 #include "helper.h"
 #include "tspMap.h"
+#include "hillClimbingCandidate.h"
 
 class geneticAlgorithm {
 private:
@@ -29,8 +30,8 @@ public:
 	geneticAlgorithm (const tspMap& map) : currentMap (map) {
 		++runCount;
 		standard_pop_size = 100;
-		number_of_gens = 500;
-		limit = 75;
+		number_of_gens = 1000;
+		limit = 150;
 		cross_prob = 0.3;
 		mutation_chance = 0.01;
 		optimal_gen = 1;
