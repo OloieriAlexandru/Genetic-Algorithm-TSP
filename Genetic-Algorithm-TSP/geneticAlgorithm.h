@@ -25,15 +25,16 @@ private:
 	std::vector<int>					optimal_tour;
 	std::vector<int>					mold;
 	std::vector<std::vector<int>>		pop;
-	double								cross_prob, mutation_chance;
+	double								cross_prob, mutation_chance, elitism_rate;
 public:
 	geneticAlgorithm (const tspMap& map) : currentMap (map) {
 		++runCount;
 		standard_pop_size = 100;
-		number_of_gens = 1000;
-		limit = 150;
-		cross_prob = 0.3;
-		mutation_chance = 0.01;
+		number_of_gens = 1500;
+		limit = 350;
+		elitism_rate = 0.10;
+		cross_prob = 0.35;
+		mutation_chance = 0.015;
 		optimal_gen = 1;
 	}
 

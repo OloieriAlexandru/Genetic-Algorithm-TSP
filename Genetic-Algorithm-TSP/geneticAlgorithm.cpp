@@ -10,8 +10,8 @@ void geneticAlgorithm::runGeneticAlgorithm (std::ofstream & fileOut, int runs)
 	
 	std::cout << "------------------------------------------------------------------\n\n";
 	std::cout << "Do you wish to proceed with the following parameters:\n";
-	std::cout << "Population size: " << standard_pop_size << "\tNumber of generations: " << number_of_gens
-		<< "\tHypermutation mark: " << limit << "\tMutation chance: " << mutation_chance << "\tCrossover chance: " << cross_prob << "? (y/n)\t";
+	std::cout << "Population size: " << standard_pop_size << "\tNumber of generations: " << number_of_gens<< "\tHypermutation mark: " << limit
+		<< "\tElitism rate: " << elitism_rate << "\tMutation chance: " << mutation_chance << "\tCrossover chance: " << cross_prob << "? (y/n)\t";
 	
 	std::cin >> answer;
 	while(answer != "y" and answer != "n")
@@ -23,8 +23,8 @@ void geneticAlgorithm::runGeneticAlgorithm (std::ofstream & fileOut, int runs)
 	{
 		set_param();
 		std::cout << "Changes done! The parameters are now:\n";
-		std::cout << "Population size: " << standard_pop_size << "\tNumber of generations: " << number_of_gens
-			<< "\tHypermutation mark: " << limit << "\tMutation chance: " << mutation_chance << "\tCrossover chance: " << cross_prob << "\n";
+		std::cout << "Population size: " << standard_pop_size << "\tNumber of generations: " << number_of_gens << "\tHypermutation mark: " << limit
+			<< "\tElitism rate: " << elitism_rate << "\tMutation chance: " << mutation_chance << "\tCrossover chance: " << cross_prob << "\n";
 	}
 	else
 		std::cout << "The parameters were not modified!\n";
@@ -107,7 +107,7 @@ void geneticAlgorithm::hypermutation(const int &counter)
 	if (counter < limit)
 		mutation_prob = mutation_chance;
 	else
-		mutation_prob = 0.3;
+		mutation_prob = 0.5;
 	unsigned int pop_size = pop.size(), chromosome_size = currentMap.points.size();
 	for (unsigned int i = 0; i < pop_size; ++i)
 		for (unsigned int j = 0; j < chromosome_size - 1; ++j)
@@ -211,11 +211,11 @@ void geneticAlgorithm::evalGen(std::vector<double>& fit)
 {
 	unsigned int i;
 	unsigned int pop_size = pop.size();
-	double aux;
-	double maxi_f = helper::Euclidian_2D(currentMap, decodeElem(pop[0]));
+	//double aux;
+	//double maxi_f = helper::Euclidian_2D(currentMap, decodeElem(pop[0]));
 	for (i = 0; i < pop_size; ++i)
 	{
-		fit.push_back(1/(0.00001 + helper::Euclidian_2D(currentMap, decodeElem(pop[i])))); //dupa cum ai sa vezi in cele doua fisiere .txt, varianta asta nu produce rezultate atat de bune
+		fit.push_back(1/(0.00001 + helper::Euclidian_2D(currentMap, decodeElem(pop[i]))));
 	}
 	/*for (i = 1; i < pop.size(); ++i)
 	{
@@ -239,15 +239,25 @@ unsigned int geneticAlgorithm::select1(const std::vector<double> &fs)
 void geneticAlgorithm::selection()
 {
 	std::vector<double> fit;
+	unsigned int i;
+	unsigned int poz;
+	std::vector<std::vector<int>> newpop;
+	unsigned int elitism_candidates_num = floor(elitism_rate * standard_pop_size);
+	auto it = pop.begin();
+	for (i = 1; i <= elitism_candidates_num; ++i)
+	{
+		poz = det_optimal_chromosome();
+		newpop.emplace_back(pop[poz]);
+		pop.erase(it + poz);
+		it = pop.begin();
+	}
 	evalGen(fit);
 	std::vector<double> fs;
-	unsigned int i;
-	fs.push_back(fit[0]);
+	fs.emplace_back(fit[0]);
 	for (i = 1; i < pop.size(); ++i)
-		fs.push_back(fs[i - 1] + fit[i]);
-	std::vector<std::vector<int>> newpop;
-	for (i = 0; i < standard_pop_size; ++i)
-		newpop.push_back(pop[select1(fs)]);
+		fs.emplace_back(fs[i - 1] + fit[i]);
+	for (i = elitism_candidates_num; i < standard_pop_size; ++i)
+		newpop.emplace_back(pop[select1(fs)]);
 	pop = newpop;
 }
 
@@ -294,6 +304,8 @@ void geneticAlgorithm::set_param()
 	std::cin >> number_of_gens;
 	std::cout << "Give new hypermutation mark: ";
 	std::cin >> limit;
+	std::cout << "Give new elitism rate: ";
+	std::cin >> elitism_rate;
 	std::cout << "Give new mutation chance: ";
 	std::cin >> mutation_chance;
 	std::cout << "Give new crossover chance: ";
