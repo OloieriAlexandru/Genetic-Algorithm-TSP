@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <fstream>
 #include <random>
 #include <vector>
@@ -8,6 +9,18 @@
 #include <chrono>
 #include <utility>
 #include <string>
+#include <queue>
+#include <functional>
+#include <ostream>
+
+struct elitismCandidate {
+	double	value;
+	int		position;
+	elitismCandidate() { }
+	elitismCandidate (double v, int p) : value (v), position (p) { }
+	friend bool operator>(const elitismCandidate& c1, const elitismCandidate& c2);
+	friend std::ostream& operator<<(std::ostream& out, const elitismCandidate& c);
+};
 
 #include "helper.h"
 #include "tspMap.h"

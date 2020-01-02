@@ -243,15 +243,18 @@ void geneticAlgorithm::selection()
 	unsigned int poz;
 	std::vector<std::vector<int>> newpop;
 	unsigned int elitism_candidates_num = floor(elitism_rate * standard_pop_size);
-	auto it = pop.begin();
-	for (i = 1; i <= elitism_candidates_num; ++i)
-	{
-		poz = det_optimal_chromosome();
-		newpop.emplace_back(pop[poz]);
-		pop.erase(it + poz);
-		it = pop.begin();
+	std::priority_queue<elitismCandidate, std::vector<elitismCandidate>, std::greater<elitismCandidate> >pq;
+	evalGen (fit);
+	for (int i = 0; i < pop.size (); ++i) {
+		pq.push (elitismCandidate (fit[i], i));
+		if (pq.size () > elitism_candidates_num) {
+			pq.pop ();
+		}
 	}
-	evalGen(fit);
+	while (!pq.empty ()) {
+		newpop.push_back (pop[pq.top ().position]);
+		pq.pop ();
+	}
 	std::vector<double> fs;
 	fs.emplace_back(fit[0]);
 	for (i = 1; i < pop.size(); ++i)
@@ -341,4 +344,15 @@ double geneticAlgorithm::calc_f_value()
 			sol = aux;
 	}		
 	return sol;
+}
+
+bool operator>(const elitismCandidate & c1, const elitismCandidate & c2)
+{
+	return c1.value > c2.value;
+}
+
+std::ostream & operator<<(std::ostream & out, const elitismCandidate & c)
+{
+	out << c.position << ' ' << c.value;
+	return out;
 }
