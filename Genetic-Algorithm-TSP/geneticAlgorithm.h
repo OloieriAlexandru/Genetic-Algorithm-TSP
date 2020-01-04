@@ -53,7 +53,7 @@ public:
 
 	void						set_param();
 	void						runGeneticAlgorithm (std::ofstream& fileOut, int runs);
-	void						hypermutation(const int &counter);
+	void						hypermutation(int &counter);
 	void						crossover();
 	void						evalGen(std::vector<double>& fit);
 	void						selection();

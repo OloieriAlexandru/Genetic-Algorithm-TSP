@@ -10,10 +10,14 @@ struct point {
 		x = px;
 		y = py;
 	}
+
+	friend std::ostream& operator<<(std::ostream& out, const point& p);
 };
 
 class tspMap {
 public:
 	std::vector<point>			points;
 	void						loadMap (std::string path);
+
+	friend std::ostream& operator<<(std::ostream& out, const tspMap& mp);
 };

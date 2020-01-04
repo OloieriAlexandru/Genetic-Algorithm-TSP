@@ -6,6 +6,18 @@ std::random_device rd;
 std::mt19937 e2 (rd ());
 std::uniform_real_distribution<> dist (0, 1);
 
+bool goodPermutation (const std::vector<int>& v) {
+	int n = v.size ();
+	for (int i = 0; i < n - 1; ++i) {
+		for (int j = i + 1; j < n; ++j) {
+			if (v[i] == v[j]) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
 void simulatedAnnealing::generateRandomCandidate ()
 {
 	for (int i = 0; i < dim; ++i) {
@@ -86,7 +98,7 @@ void simulatedAnnealing::runSimulatedAnnealing (std::ofstream & fileOut, int run
 		std::chrono::duration<double> elapsed_seconds = end - start;
 		time = elapsed_seconds.count ();
 		int dim = bestCandidate.size();
-		std::cout << "Iteration " << i + 1 << ": found optimal tour ";
+		std::cout << "Iteration " << i + 1 << ": found optimal tour \n";
 		for (int i = 0; i < dim - 1; ++i) {
 			std::cout << bestCandidate[i] << " | ";
 		}

@@ -3,16 +3,24 @@
 #include <fstream>
 #include <ctime>
 #include <cstdlib>
+#include <utility>
+#include <vector>
+#include <cmath>
 
 #include "tsp.h"
+
+#define	fi	first
+#define se	second
 
 const char* mapsPath = "maps.txt";
 const char* errorMessage = "Errorr!\n";
 
-void listOptions ();
-void listMaps ();
-void addMap (const std::string& name, const std::string& path);
-std::string getPath (const std::string& name);
+void		listOptions ();
+void		listMaps ();
+void		addMap (const std::string& name, const std::string& path);
+std::string	getPath (const std::string& name);
+double		distance (const std::pair<double, double>& p1, const std::pair<double, double>& p2);
+void		optimumDistanceCalculator ();
 
 int main() {
 	srand (time (NULL));
@@ -43,6 +51,9 @@ int main() {
 			std::cin >> name >> path;
 			addMap (name, path);
 		}
+		else if (command == "optimum") {
+			optimumDistanceCalculator ();
+		}
 		else if (command == "quit" || command == "q") {
 			break;
 		}
@@ -57,7 +68,8 @@ void listOptions () {
 	std::cout << "1. run mapName\n";
 	std::cout << "2. list (all the maps)\n";
 	std::cout << "3. add (a new map)\n";
-	std::cout << "4. quit\n";
+	std::cout << "4. optimum (optimum distance calculator)\n"; 
+	std::cout << "5. quit\n";
 }
 
 void listMaps () {
@@ -94,4 +106,34 @@ std::string getPath (const std::string& name) {
 		}
 	}
 	return "";
+}
+
+double distance (const std::pair<double, double>& p1, const std::pair<double, double>& p2) {
+	return sqrt ((p2.fi - p1.fi)*(p2.fi - p1.fi) + (p2.se - p1.se)*(p2.se - p1.se));
+}
+
+void optimumDistanceCalculator () {
+	int n;
+	std::string skip;
+	std::vector<std::pair<double, double>> points;
+	std::vector<int> optimumPerm;
+	std::cout << "Enter the number of points: ";
+	std::cin >> n;
+	points.resize (n);
+	std::cout << "Enter the points:\n";
+	for (int i = 0; i < n; ++i) {
+		std::cin >> skip >> points[i].first >> points[i].second;
+	}
+	optimumPerm.resize (n);
+	std::cout << "Enter the optimum permutation: \n";
+	for (int i = 0; i < n; ++i) {
+		std::cin >> optimumPerm[i];
+		--optimumPerm[i];
+	}
+	double res = 0;
+	for (int i = 0; i < n - 1; ++i) {
+		res += distance (points[optimumPerm[i]], points[optimumPerm[i + 1]]);
+	}
+	res += distance (points[optimumPerm[0]], points[optimumPerm[n - 1]]);
+	std::cout << "The optimum distance for the map is " << res << '\n';
 }

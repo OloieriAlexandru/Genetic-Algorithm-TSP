@@ -6,7 +6,8 @@ double helper::Euclidian_2D (const tspMap& currentMap, const std::vector<int>& x
 	unsigned int chromo_size = x.size ();
 	for (unsigned int i = 1; i < chromo_size; ++i)
 	{
-		tour_weight += sqrt (pow (currentMap.points[x[i]].y - currentMap.points[x[i - 1]].y, 2) + pow (currentMap.points[x[i]].x - currentMap.points[x[i - 1]].x, 2));
+		tour_weight += sqrt ((currentMap.points[x[i]].y - currentMap.points[x[i - 1]].y)*(currentMap.points[x[i]].y - currentMap.points[x[i - 1]].y) + (currentMap.points[x[i]].x - currentMap.points[x[i - 1]].x)*(currentMap.points[x[i]].x - currentMap.points[x[i - 1]].x));
 	}
+	tour_weight += sqrt ((currentMap.points[x[0]].y - currentMap.points[x[chromo_size-1]].y)*(currentMap.points[x[0]].y - currentMap.points[x[chromo_size-1]].y) + (currentMap.points[x[0]].x - currentMap.points[x[chromo_size-1]].x)*(currentMap.points[x[0]].x - currentMap.points[x[chromo_size-1]].x));
 	return tour_weight;
 }

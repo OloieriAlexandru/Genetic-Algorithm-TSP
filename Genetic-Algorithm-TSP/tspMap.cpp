@@ -13,6 +13,7 @@ void tspMap::loadMap(std::string path) {
 		}
 	}
 
+	points.clear ();
 	while (fileIn >> currentLine) {
 		if (currentLine == "EOF") {
 			break;
@@ -22,4 +23,19 @@ void tspMap::loadMap(std::string path) {
 	}
 
 	fileIn.close();
+}
+
+std::ostream & operator<<(std::ostream & out, const point & p)
+{
+	out << p.x << ' ' << p.y;
+	return out;
+}
+
+std::ostream & operator<<(std::ostream & out, const tspMap & mp)
+{
+	out << mp.points.size () << '\n';
+	for (auto& point : mp.points) {
+		out << point << '\n';
+	}
+	return out;
 }

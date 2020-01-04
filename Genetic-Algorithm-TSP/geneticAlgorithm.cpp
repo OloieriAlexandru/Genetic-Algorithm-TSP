@@ -100,14 +100,17 @@ void geneticAlgorithm::init_pop()
 		chromosome_generator(pop[i]);
 }
 
-void geneticAlgorithm::hypermutation(const int &counter)
+void geneticAlgorithm::hypermutation(int &counter)
 {
 	std::uniform_real_distribution<> dist(0, 1);
 	double mutation_prob;
 	if (counter < limit)
 		mutation_prob = mutation_chance;
 	else
+	{
 		mutation_prob = 0.5;
+		counter = 1;
+	}
 	unsigned int pop_size = pop.size(), chromosome_size = currentMap.points.size();
 	for (unsigned int i = 0; i < pop_size; ++i)
 		for (unsigned int j = 0; j < chromosome_size - 1; ++j)
@@ -280,8 +283,6 @@ void geneticAlgorithm::Genetic_Algorith()
 		crossover();
 		selection();
 		opt_poz = det_optimal_chromosome();
-		if (counter == limit)
-			best_sol = helper::Euclidian_2D (currentMap, decodeElem(pop[opt_poz]));
 		possible_sol = helper::Euclidian_2D (currentMap, decodeElem(pop[opt_poz]));
 		i++;
 		if (possible_sol < best_sol)

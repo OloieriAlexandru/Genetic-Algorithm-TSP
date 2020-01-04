@@ -1,2 +1,6 @@
 bier127 maps/bier127.txt
+eil51 maps/eil51.txt
+gr202 maps/gr202.txt
+krod100 maps/krod100.txt
 st70 maps/st70.txt
+ulysses22 maps/ulysses22.txt
