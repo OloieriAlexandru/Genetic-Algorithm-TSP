@@ -27,7 +27,7 @@
 \definecolor{numbers_colour}{rgb}{0.5,0.5,0.5}
 \definecolor{mygreen}{rgb}{0,0.6,0}
 \definecolor{background_colour}{rgb}{0.95,0.95,0.92}
-\lstset{basicstyle=\footnotesize, backgroundcolor=\color{background_colour}, keywords={,begin, while, do, end, if, then, else}, numbers=left, numberstyle=\tiny\color{numbers_colour}, commentstyle=\color{mygreen}, morecomment=[n]{/*}{*/}, keywordstyle=\color{magenta}, captionpos=b, emph=[1]{currentGen, number_of_gens, pop, best_sol, possible_sol, counter, optimal_tour, opt_poz, currentInstance},emphstyle=[1]{\itshape}, emph=[2]{HillClimbingBI},emphstyle=[2]{\sffamily}, mathescape=true}
+\lstset{basicstyle=\footnotesize, backgroundcolor=\color{background_colour}, keywords={,begin, while, do, end, if, then, else, for, return, true, break, false}, numbers=left, numberstyle=\tiny\color{numbers_colour}, commentstyle=\color{mygreen}, morecomment=[n]{/*}{*/}, keywordstyle=\color{magenta}, captionpos=b, emph=[1]{currentGen, number_of_gens, pop, best_sol, possible_sol, counter, optimal_tour, opt_poz, currentInstance, candidate, t, bestValue, i ,numberOfCities, otherPos, currentValue, foundNewCandidate},emphstyle=[1]{\itshape}, emph=[2]{HillClimbingBI},emphstyle=[2]{\sffamily}, mathescape=true}
 
 \title{T3 - A Study on the Performance of Both Genetic Algorithms and Heuristics in Solving the Traveling Salesman Problem}
 \author{Daniș Ciprian\\
@@ -40,7 +40,7 @@
 \justify
 \section{Introduction}
 
-The \textbf{travelling salesman problem} (also called the \textbf{travelling salesperson problem} or \textbf{TSP}) asks the following question: "Given a list of cities and the distances between each pair of cities, what is the shortest possible route that visits each city and returns to the origin city?" It is an \textbf{NP-hard} problem in combinatorial optimization, important in operations research and theoretical computer science.
+The \textbf{travelling salesman problem}\cite{tsp} (also called the \textbf{travelling salesperson problem} or \textbf{TSP}) asks the following question: "Given a list of cities and the distances between each pair of cities, what is the shortest possible route that visits each city and returns to the origin city?" It is an \textbf{NP-hard} problem in combinatorial optimization, important in operations research and theoretical computer science.
 
 In this study we aim to analyze the performance of both a Genetic Algorithm and a heuristic in solving several instances of TSP, compare the results of the two methods and draw an inference as to which algorithm yields optimal values for a certain instance.
 
@@ -48,32 +48,32 @@ In this study we aim to analyze the performance of both a Genetic Algorithm and 
 
 \subsection{Simulated Annealing}
 
-The candidates will be represented as arrays of integers, which represent permutations of the order in which the "cities" will be visited ($n$ cities). A neighbor of the current candidate will be a permutation of size $n$ in which $n-2$ elements have the same position, and $2$ elements are swapped.
-
 We will use a version of the algorithm in which, at each step, we choose as the next candidate the first neighbor that meets the search criteria (Simulated Annealing First Improvement).
 
 \begin{lstlisting}[frame=single][caption={Simulated Annealing Pseudocode}]
 begin
-	candidate = generate_candidate(); 
+	candidate := generate_candidate() 
 	/*generate a random permutation of the numbers 0,1,...,numberOfCities-1*/
-	t = 1000;
-	bestValue = Euclidian_2D(currentInstance, candidate);
+	t := 1000
+	bestValue = Euclidian_2D(currentInstance, candidate)
 	while (true) do begin
-		foundNewCandidate = false;
-		for (i=0;i<numberOfCities;++i) do
-			otherPos = random() % numberOfCities; 
-			swap(candidate[i], candidate[otherPos]);
-			/*now \"candidate\" stores a neighbor of the current candidate*/
-			currentValue = Euclidian_2D(currentInstance, candidate);
-			if (currentValue < bestValue 
-			|| random(0,1) < exp(-abs(currentValue-bestValue) / t)) then
-				bestValue = currentValue;
-				foundNewCandidate = true;
-				break;
-			swap(candidate[i], candidate[otherPos]);
-		t = 0.9 * t;	
-		if (foundNewCandidate == false) then
-			break;
+		foundNewCandidate := false
+		for (i:=0; i<numberOfCities-1; ++i) do
+			for (j:=i+1; j<numberOfCities;++j) do
+				swap(candidate[i], candidate[j])
+				/*"candidate" stores a neighbor of the current candidate*/
+				currentValue := Euclidian_2D(currentInstance, candidate)
+				if currentValue < bestValue 
+				|| random(0,1) < exp(-abs(currentValue-bestValue)/t) then
+					bestValue := currentValue
+					foundNewCandidate := true
+					break
+				swap(candidate[i], candidate[j])
+			if foundNewCandidate then
+				break
+		t := 0.9*t;
+		if foundNewCandidate = false then
+			break
 	return bestValue
 end
 \end{lstlisting}
@@ -87,7 +87,7 @@ end
 
 We will work in the following experiment with an improved Genetic Algorithm that makes use of hypermutation and another heuristic (in our case, Hill Climbing Best Improvement).
 
-\begin{lstlisting}[frame=single][caption={Improved Genetic Algorithm Pseudocode}]
+\begin{lstlisting}[frame=single][caption={Genetic Algorithm Pseudocode}]
 begin
 	init_pop() /*initialize the population*/
 	set_mold()/*create a list of all the "cities"*/ 
@@ -118,60 +118,104 @@ end
 {\itshape Euclidian\_2D}() - function used to determine the "weight" of a decoded chromosome; see the \textbf{Experiment} section for more\\
 {\itshape best\_sol} - the current best value of \emph{Euclidian\_2D}() in all the population, throughout the generations\\
 {\itshape possible\_sol} - a candidate for the title of {\itshape best\_sol} in a generation\\
-{\itshape optimal\_tour} - the best chromosome throughout all generations\\
+{\itshape optimal\_tour} - the best value of the best chromosome throughout all generations\\
 {\itshape currentInstance} - the instance of TSP with which we are currently working\\
 {\itshape opt\_poz} - the position of the best chromosome in the population in a generation\\
 {\itshape det\_optimal\_chromosome}() - function used to determine the position of the best chromosome in a population in a generation\\
 {\itshape counter} - the number of generations throughout which the value of {\itshape best\_sol} has not changed\\
 {\sffamily HillClimbingBI}({\itshape optimal\_tour}) - implementation of Hill Climbing Best Improvement\cite{heuristic} in which the starting point, which was generated randomly, is replaced by {\itshape optimal\_tour}\\
-{\itshape selection}(), {\itshape hypermutation}() and {\itshape crossover}() - see the \textbf{Experiment} section
+{\itshape selection}(), {\itshape hypermutation}()\cite{mutation} and {\itshape crossover}() - see the \textbf{Experiment} section
 
 \section{Experiment}
 
 \subsection{General}
 
-We will work with instances of TSP that have the edges' weight represented as Euclidian 2D distances (precisely with \textit{eil51}\cite{instances}, \textit{gr202}\cite{instances}, \textit{krod100}\cite{instances}, \textit{st70}\cite{instances} and \textit{ulysses22}\cite{instances}). Therefore, in {\itshape Euclidian\_2D}() we will compute the weight of a circuit of all the "cities".
+We will work with 4 instances of symmetric TSP (precisely with \textit{eil51}\cite{instances}, \textit{ts225}\cite{instances}, \textit{krod100}\cite{instances} and \textit{st70}\cite{instances}), in which the distance from node i to node j is the same as from node j to node i. Moreover, the instances have the edges' weight represented as Euclidian 2D distances. Therefore, in {\itshape Euclidian\_2D}() we will compute the weight of a circuit of all the "cities".
 
 \subsection{Simulated Annealing}
+
+The candidates will be represented as arrays of integers, which represent permutations of the order in which the "cities" will be visited ($n$ cities). A neighbor of the current candidate will be a permutation of size $n$ in which $n-2$ elements have the same position, and $2$ elements are swapped.
 
 For each map, we will run the algorithm 30 times, and for each run we will have 100 iterations of the Simulated Annealing metaheuristic (so we will get $3000$ results).
 
 \subsection{Genetic Algorithm}
 
-In each iteration, we will work with a population of . The stopping condition will be that the current generation does not have its index number greater than the number of allowed generations.
+Each chromosome in the population will be represented as a list of positions that the nodes can have in a permutation. More exactly, each element in the chromosome will be an integer in the interval $[0,n-1-i]$, where $n$ represents the number of nodes and $i$ the position of the element in the chromosome.
 
-Regarding the structure of the Genetic Algorithm, we will refer to 3 important elements: {\itshape mutation}(), {\itshape crossover}() and {\itshape selection}(). The first 2 are "genetic operators" and are responsible for the changes that the population undergoes in a certain generation. The last one is tasked with selecting, based on a {\itshape fitness} function, which candidates are fit to be taken by the next generation.
+In {\itshape hypermutation}(), {\itshape counter} keeps count of how many generations have gone by since the value of {\itshape best\_sol} has been changed. If the value reaches the threshold then, instead of performing a generic mutation (a mutation with a small rate, e.g. $0.015$), we will mutate the population with a rate of $0.5$. This way, we "reset" the population so that the processing of the chromosomes does not stagnate around an accumulation point.
 
-In {\itshape mutation}(), we will assign for each bit in the population a real number between 0 and 1 representing the mutation probability. If the number of the current bit is lower than $0.01$, then we will "mutate" that bit by negating it.
+In {\itshape crossover}(), because of the structure of the chromosomes, which allows for repetitive values, we will perform a generic lossless cut-point crossover (both the "children" and their "parents" will be included in the population, resulting in an "extended" population).
 
-In {\itshape crossover}(), we will assign to each member of the population a random real number between 0 and 1 representing the crossover probability. We will then sort the members in ascending order based on the numbers assigned and those whose number is below $0.3$ will be considered fit for crossover. If the number of the crossover candidates is even, we will simply group the candidates in pairs (the first 2 in a group, the following 2 in another group and so on), then generate a random number between $0$ and $n \cdot 32 - 2$. That number will be the "crossover point", and all the bits between it and $n \cdot 32 -1$ will be swapped between the members of a pair. If the number of crossover candidates is instead odd, we will generate a random boolean variable in a Bernoulli distribution. If the variable yields true, then we will pair the last crossover candidate with the first population member with the crossover probability $\geq 0.3$. Otherwise, we will ignore the last candidate. Nonetheless, we will then proceed to execute the rest of the steps as for when the number of candidates is even. In all scenarios, we will keep both the parents and the children in the population, thus implementing a non-destructive crossover.
+In {\itshape selection}(), we will work with the extended population resulted from the execution of {\itshape crossover}(). We will firstly determine the determine the "fitness" of each chromosome/member of the population (a real positive number yielded by the expression $1/(0.00001 + Euclidian\_2D(decoded_chromosome)))$. Then we will apply elitism on the population (we will ensure that a few best chromosomes appear in the future generation at least once) and finally, with the use of a "roulette wheel", we will select the remaining $n-k$ chromosomes, where $n$ is the initial or standard size of the population and $k$ is the number of chromosomes selected with elitism.
 
-In {\itshape selection}(), we will firstly determine the "fitness" of each chromosome/member of the population. The "fitness" will be a real positive number yielded by the expression $1.1 C - f(chromosome)$, where $C$ is the worst member of the population (the one for which a test function returns the worst result) and $f()$ is the current test function. After determining each member's "fitness", we will then create a "roulette wheel" where each section will be assigned \linebreak to a chromosome and delimited by $ rouletteVal(previous\ chromosome) $ and $ fitness(current\ chromosome) $ + $rouletteVal(previous\ chromosome) \linebreak (=rouletteVal(current\ chromosome))$. Since the population that reaches the selection phase can have a size greater than 100, we will select only the first 100 fit candidates. To select the members of the next generation, we will generate for 100 times a random real number between 0 and 1 in a uniform distribution, then multiply the number by $rouletteVal(last\ chromosome)$. The section of the roulette wheel in which the resulted value falls will give us the chromosome that is fit to appear in the next generation. Thus, we will give a chance even to those chromosomes whose fitness value is extremely little.
+After executing the three operations above for a certain number of generations, we will use the optimal tour found throughout all generations as starting point for the Hill Climbing Best Improvement, which will be used to further improve the result yielded by the algorithm.
 
-Regarding the parameters, the Genetic Algorithm is mostly influenced by the number of allowed generation, the dimension of a chromosome (meaning the dimension of a solution in the population), the size of a population and the starting population. Other significant parameters would be the fitness function, the mutation probability mark and the crossover probability mark (any value assigned to a chromosome that is under these values will deem the chromosome fit for mutation/crossover), but since all these will be considered the same for each test function and are as described above, their influence is negligible.
-In {\itshape hypermutation}()\cite{mutation}, we introduce a new parameter, {\itshape counter}. {{\itshape counter} keeps count of how many generations have gone by since the value of {\itshape best\_sol} has been changed. If the value reaches a given mark (in our case $75$) then, instead of performing a generic mutation (a mutation with a small rate, e.g. $0.01$), we will mutate the population with a rate of $0.5$. This way, we "reset" the population so that the processing of the chromosomes does not stagnate around an accumulation point. Otherwise, the hypermutation is implemented similarly to the mutation in a basic Genetic Algorithm.
-	
-In the case of Hill Climbing, in terms of implementation, apart from the details above and the reference, we will also refer to another written article\cite{T1} that draws a comparison between the performances of different heuristics. The heuristic will be used to process the best individual out of the entire final population (resulted after altering the final generation), so as to reach even better optimal results.
+For each map, we will run the algorithm $30$ times, with the following parameters: a population size of $100$, $1500$ allowed generation, a hypermutation threshold of $350$, a mutation rate of $0.015$, a crossover rate of $0.35$ and an elitism rate of $0.1$.
 
 \section{Results}
 
 \subsection{Tables}
 
-\subsection{Charts}
+\begin{table}[H]
+\begin{adjustwidth}{}{}
+\centering
+\resizebox{\textwidth}{!}{
+\begin{tabular}{*{7}{|l}|} \hline
+\multicolumn{7}{|c|}{Results}\\\hline
+Instance & \Centerstack[c]{Optimal\\ Value} & \Centerstack[c]{Lowest Value\\ Obtained} & \Centerstack[c]{Highest Value\\ Obtained} & Average & \Centerstack[c]{$\sigma$\\(standard deviation)} & Average Time \\\Xhline{3\arrayrulewidth}
+eil51 & 426 & 452.39 & 504.52 & 484.1536 & 13.24391 &2.921166 s\\\hline
+st70 & 675 & 857.882 & 949.251 & 908.1673 & 26.68194 & 8.730105 s\\\hline
+krod100 & 21294 & 41337.4 & 52108.6 & 47588.5 & 2501.634 & 4.066486 s\\\hline
+ts225 & 126643 & 543578 & 655030 & 621550.5 & 25043.06 & 14.2773 s\\\hline
+\end{tabular}}
+\caption{Results for Simulated Annealing}
+\end{adjustwidth}
+\end{table}
+
+\begin{table}[H]
+\begin{adjustwidth}{}{}
+\centering
+\resizebox{\textwidth}{!}{
+\begin{tabular}{*{7}{|l}|} \hline
+\multicolumn{7}{|c|}{Results}\\\hline
+Instance & \Centerstack[c]{Optimal\\ Value} & \Centerstack[c]{Lowest Value\\ Obtained} & \Centerstack[c]{Highest Value\\ Obtained} & Average & \Centerstack[c]{$\sigma$\\(standard deviation)} & Average Time \\\Xhline{3\arrayrulewidth}
+eil51 & 426 & 511.508 & 675.088 & 590.3399 & 43.02564 & 2.592588 s\\\hline
+st70 & 675 & 970.972 & 1251.44 & 1097.229 & 66.90697 & 3.920526 s\\\hline
+krod100 & 21294 & 35051.6 & 50003.3 & 41699.61 & 3799.186 & 7.01967 s\\\hline
+ts225 & 126643 & 273575 & 356486 & 319754 & 23678.86 & 45.09334 s\\\hline
+\end{tabular}}
+\caption{Results for Genetic Algorithm}
+\end{adjustwidth}
+\end{table}
 
 \subsection{Interpretation}
 
+As we can see in the tables above, when it comes to instances with a number of nodes lower than 100, the Simulated Annealing yields slightly better results than the Genetic Algorithm, in the case of \textit{eil51} coming extremely close to the optimal value. On the hand hand, for instances with 100 or more nodes, the Genetic Algorithm reaches better values, while the Simulated Annealing cannot reach an attraction pool with a low value for the local minima, since the number of permutation is extremely large, and the greedy strategy it follows is unlikely to find close to optimal results. However, the results yielded by the Genetic Algorithm in this case are rather adequate than excellent.
+
+As for execution time, for instances with less than 100 nodes, the Genetic Algorithm performs faster, while for instances with 100 or more nodes, it is the Simulated Annealing that computes the result quicker, in the case of \textit{ts225} the difference between the 2 methods being more than 30 seconds in average.
+
 \section{Conclusions}
 
+All things considered, we can state that Genetic Algorithm produces good results for an \textbf{NP}-hard problem and, due to the short execution time, it is usable in practice. Moreover, because GA is more complex than most of the heuristics, it has a higher number of parameters which can be modified, this giving us the possibility to change their value until we find the most suitable ones. 
+
 \begin{thebibliography}{9}
+
+\bibitem{tsp}
+	Traveling Salesman Problem - From Wikipedia, the free encyclopedia $-$
+	\url{https://en.wikipedia.org/wiki/Travelling_salesman_problem}
 
 \bibitem{heuristic}
 	Algoritmi Genetici - Metode traiectorie $-$
 	\url{https://profs.info.uaic.ro/~pmihaela/GA/laborator2.html}
 
+\bibitem{mutation}
+	Suvarna Patil, Manisha Bhende, {\itshape Comparison and Analysis of Different Mutation Strategies to improve the Performance of Genetic Algorithm} $-$
+	\url{https://pdfs.semanticscholar.org/75eb/30781a18a63a89b09af6cea9c388accac0d4.pdf}
+
 \bibitem{instances}
 	MP-TESTDATA - The TSPLIB Symmetric Traveling Salesman Problem Instances $-$
 	\url{http://elib.zib.de/pub/mp-testdata/tsp/tsplib/tsp/index.html}
+
 
 	\end{thebibliography}
 \end{document}
