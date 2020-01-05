@@ -60,7 +60,7 @@ bool simulatedAnnealing::simulatedAnnealingExploration ()
 	if (foundBetter) {
 		swap (currentCandidate[firstPos], currentCandidate[secondPos]);
 	}
-	return foundBetter && temperature >= 1e-18;
+	return foundBetter && temperature >= 1e-30;
 }
 
 double simulatedAnnealing::evaluateCurrentCandidate ()

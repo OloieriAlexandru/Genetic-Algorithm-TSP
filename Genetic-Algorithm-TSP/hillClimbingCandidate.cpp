@@ -6,8 +6,6 @@ bool hillClimbingCandidate::hillClimbingExploration ()
 	int otherPos, firstPos, secondPos;
 	double currentValue;
 
-	std::cout << currentIterationBest << '\n';
-
 	for (int i = 0; i < dim-1; ++i) {
 		for (int j = i + 1; j < dim; ++j) {
 			/* otherPos = rand () % dim;
