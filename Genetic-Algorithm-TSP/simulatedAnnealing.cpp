@@ -39,25 +39,28 @@ bool simulatedAnnealing::simulatedAnnealingExploration ()
 	double currentValue;
 
 	for (int i = 0; i < dim && !foundBetter; ++i) {
-		otherPos = rand () % dim;
-		while (otherPos == i) {
-			otherPos = rand () % dim;
+		for (int j = i + 1; j < dim && !foundBetter; ++j) {
+			/*otherPos = rand () % dim;
+			while (otherPos == i) {
+				otherPos = rand () % dim;
+			}*/
+			otherPos = j;
+			swap (currentCandidate[i], currentCandidate[otherPos]);
+			currentValue = evaluateCurrentCandidate ();
+			if (currentValue < currentIterationBest || (dist (e2) < exp (-abs (currentValue - currentIterationBest) / temperature))) {
+				currentIterationBest = currentValue;
+				foundBetter = true;
+				firstPos = i;
+				secondPos = otherPos;
+			}
+			swap (currentCandidate[i], currentCandidate[otherPos]);
 		}
-		swap (currentCandidate[i], currentCandidate[otherPos]);
-		currentValue = evaluateCurrentCandidate ();
-		if (currentValue < currentIterationBest || (dist (e2) < exp (-abs (currentValue - currentIterationBest) / temperature))) {
-			currentIterationBest = currentValue;
-			foundBetter = true;
-			firstPos = i;
-			secondPos = otherPos;
-		}
-		swap (currentCandidate[i], currentCandidate[otherPos]);
 	}
 	temperature *= 0.9;
 	if (foundBetter) {
 		swap (currentCandidate[firstPos], currentCandidate[secondPos]);
 	}
-	return foundBetter;
+	return foundBetter && temperature >= 1e-18;
 }
 
 double simulatedAnnealing::evaluateCurrentCandidate ()
@@ -118,7 +121,7 @@ double simulatedAnnealing::simulatedAnnealingRun (int iterations, std::vector<in
 		initSimulatedAnnealing ();
 
 		while (simulatedAnnealingExploration ());
-
+		
 		if (i == 0) {
 			bestRes = currentIterationBest;
 			bestCandidate = currentCandidate;

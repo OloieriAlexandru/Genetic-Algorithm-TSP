@@ -4,3 +4,4 @@ gr202 maps/gr202.txt
 krod100 maps/krod100.txt
 st70 maps/st70.txt
 ulysses22 maps/ulysses22.txt
+pcb442 maps/pcb442.txt

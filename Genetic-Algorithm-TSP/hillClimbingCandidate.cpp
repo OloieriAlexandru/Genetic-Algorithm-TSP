@@ -6,20 +6,25 @@ bool hillClimbingCandidate::hillClimbingExploration ()
 	int otherPos, firstPos, secondPos;
 	double currentValue;
 
-	for (int i = 0; i < dim; ++i) {
-		otherPos = rand () % dim;
-		while (otherPos == i) {
-			otherPos = rand () % dim;
+	std::cout << currentIterationBest << '\n';
+
+	for (int i = 0; i < dim-1; ++i) {
+		for (int j = i + 1; j < dim; ++j) {
+			/* otherPos = rand () % dim;
+			while (otherPos == i) {
+				otherPos = rand () % dim;
+			} */
+			otherPos = j;
+			swap (currentCandidate[i], currentCandidate[otherPos]);
+			currentValue = evaluateCurrentCandidate ();
+			if (currentValue < currentIterationBest) {
+				currentIterationBest = currentValue;
+				foundBetter = true;
+				firstPos = i;
+				secondPos = otherPos;
+			}
+			swap (currentCandidate[i], currentCandidate[otherPos]);
 		}
-		swap (currentCandidate[i], currentCandidate[otherPos]);
-		currentValue = evaluateCurrentCandidate ();
-		if (currentValue < currentIterationBest) {
-			currentIterationBest = currentValue;
-			foundBetter = true;
-			firstPos = i;
-			secondPos = otherPos;
-		}
-		swap (currentCandidate[i], currentCandidate[otherPos]);
 	}
 	if (foundBetter) {
 		swap (currentCandidate[firstPos], currentCandidate[secondPos]);
