@@ -214,6 +214,8 @@ UpgradeLog*.htm
 *.mdf
 *.ldf
 
+/Genetic-Algorithm-TSP/app.exe
+
 # Business Intelligence projects
 *.rdl.data
 *.bim.layout
